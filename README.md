@@ -78,19 +78,25 @@ $ gcc -o simple simple2.s
 
 ## 5. Microsoft assembler `ml64.exe`
 
-```sh
-$ export PATH=$PATH:/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64
+![ml64.exe](img/ml64.exe.jpg)
 
-$ ml64.exe HelloWorld.asm /link /subsystem:console /defaultlib:kernel32.lib /entry:main
+```sh
+E:\workspace_asm\hello-world>ml64.exe HelloWorld.asm /link /subsystem:console /defaultlib:kernel32.lib /entry:main
 Microsoft (R) Macro Assembler (x64) Version 14.16.27045.0
 Copyright (C) Microsoft Corporation.  All rights reserved.
 
  Assembling: HelloWorld.asm
-Microsoft (R) Macro Assembler (x64) Version 14.16.27045.0
+Microsoft (R) Incremental Linker Version 14.16.27045.0
 Copyright (C) Microsoft Corporation.  All rights reserved.
 
- Assembling: Files
-MASM : fatal error A1000:cannot open file : Files
+/OUT:HelloWorld.exe
+HelloWorld.obj
+/subsystem:console
+/defaultlib:kernel32.lib
+/entry:main
+
+E:\workspace_asm\hello-world>HelloWorld.exe
+Hello x64 World!
 ```
 
 ## Handling *markdown* article
