@@ -4,6 +4,8 @@
     - [`file.c`](#filec)
     - [Commands](#commands)
   - [3. Disassembly](#3-disassembly)
+  - [4. Investigate the *function call*](#4-investigate-the-function-call)
+  - [5. Microsoft assembler `ml64.exe`](#5-microsoft-assembler-ml64exe)
   - [Handling *markdown* article](#handling-markdown-article)
 
 
@@ -58,6 +60,37 @@ Hello World
 $ objdump --disassemble-all --section=.rdata -M intel hello2.exe > hello-disasm_01.s
 
 $ objdump -d -M intel -S hello2.exe > hello-disasm_02.s
+```
+
+## 4. Investigate the *function call*
+
+```sh
+$ gcc -S -o func-call.s func-call.c 
+$ gcc func-call.s -o func-call
+$ objdump -d -M intel -S func-call.exe > func-call_disasm.s
+
+$ gcc -S -o simple.s simple.c 
+$ gcc -o simple simple.s
+$ ./simple.exe 
+
+$ gcc -o simple simple2.s
+```
+
+## 5. Microsoft assembler `ml64.exe`
+
+```sh
+$ export PATH=$PATH:/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64
+
+$ ml64.exe HelloWorld.asm /link /subsystem:console /defaultlib:kernel32.lib /entry:main
+Microsoft (R) Macro Assembler (x64) Version 14.16.27045.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+ Assembling: HelloWorld.asm
+Microsoft (R) Macro Assembler (x64) Version 14.16.27045.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+ Assembling: Files
+MASM : fatal error A1000:cannot open file : Files
 ```
 
 ## Handling *markdown* article
