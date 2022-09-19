@@ -1,0 +1,1 @@
+ml64 c:\myapp\test.asm /link /subsystem:windows /defaultlib:C:\WinDDK\6000\lib\wnet\amd64\kernel32.lib /defaultlib:C:\WinDDK\6000\lib\wnet\amd64\user32.lib /entry:Main c:\myapp\test.res

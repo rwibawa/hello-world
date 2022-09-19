@@ -1,0 +1,25 @@
+
+HelloWorld.exe:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000140001000 <.text>:
+   140001000:	48 83 ec 28          	sub    rsp,0x28
+   140001004:	48 8d 0d 05 20 00 00 	lea    rcx,[rip+0x2005]        # 0x140003010
+   14000100b:	e8 4b 00 00 00       	call   0x14000105b
+   140001010:	89 05 f2 1f 00 00    	mov    DWORD PTR [rip+0x1ff2],eax        # 0x140003008
+   140001016:	b9 f5 ff ff ff       	mov    ecx,0xfffffff5
+   14000101b:	e8 2f 00 00 00       	call   0x14000104f
+   140001020:	48 89 05 d9 1f 00 00 	mov    QWORD PTR [rip+0x1fd9],rax        # 0x140003000
+   140001027:	4c 8d 0d de 1f 00 00 	lea    r9,[rip+0x1fde]        # 0x14000300c
+   14000102e:	44 8b 05 d3 1f 00 00 	mov    r8d,DWORD PTR [rip+0x1fd3]        # 0x140003008
+   140001035:	48 8d 15 d4 1f 00 00 	lea    rdx,[rip+0x1fd4]        # 0x140003010
+   14000103c:	48 8b 0d bd 1f 00 00 	mov    rcx,QWORD PTR [rip+0x1fbd]        # 0x140003000
+   140001043:	e8 0d 00 00 00       	call   0x140001055
+   140001048:	33 c9                	xor    ecx,ecx
+   14000104a:	e8 12 00 00 00       	call   0x140001061
+   14000104f:	ff 25 c3 0f 00 00    	jmp    QWORD PTR [rip+0xfc3]        # 0x140002018
+   140001055:	ff 25 a5 0f 00 00    	jmp    QWORD PTR [rip+0xfa5]        # 0x140002000
+   14000105b:	ff 25 a7 0f 00 00    	jmp    QWORD PTR [rip+0xfa7]        # 0x140002008
+   140001061:	ff 25 a9 0f 00 00    	jmp    QWORD PTR [rip+0xfa9]        # 0x140002010

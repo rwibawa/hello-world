@@ -6,17 +6,19 @@
   - [3. Disassembly](#3-disassembly)
   - [4. Investigate the *function call*](#4-investigate-the-function-call)
   - [5. Microsoft assembler `ml64.exe`](#5-microsoft-assembler-ml64exe)
+    - [Console App](#console-app)
+    - [Windows App](#windows-app)
+      - [A *MessageBox*](#a-messagebox)
+      - [A *Window*](#a-window)
   - [Handling *markdown* article](#handling-markdown-article)
-
 
 # hello-world
 
-get assembler output from c source in gcc
+Learn assembly language by getting assembler output of c source codes. Then crafting the assembly programming by hand.
 
 * [stackoverflow](https://stackoverflow.com/questions/137038/how-do-you-get-assembler-output-from-c-c-source-in-gcc)
 * [hello asm](https://stackoverflow.com/questions/7190050/how-do-i-compile-the-asm-generated-by-gcc)
 * [gcc and objdump](https://tuttlem.github.io/2015/01/12/a-simple-example-with-gcc-and-objdump.html)
-
 
 ## 1. Experiment 1
 
@@ -78,7 +80,9 @@ $ gcc -o simple simple2.s
 
 ## 5. Microsoft assembler `ml64.exe`
 
-![ml64.exe](img/ml64.exe.jpg)
+### Console App
+
+x64 Native Tools Command Prompt for VS 2017:
 
 ```sh
 E:\workspace_asm\hello-world>ml64.exe HelloWorld.asm /link /subsystem:console /defaultlib:kernel32.lib /entry:main
@@ -97,7 +101,68 @@ HelloWorld.obj
 
 E:\workspace_asm\hello-world>HelloWorld.exe
 Hello x64 World!
+
+$ objdump -d -M intel -S HelloWorld.exe > HelloWorld.lst
 ```
+
+![ml64.exe](img/ml64.exe.jpg)
+
+### Windows App
+
+- [x64 Assembly](https://www.codeproject.com/Articles/17263/Moving-to-Windows-Vista-x64#x64_Assembly)
+
+#### A *MessageBox*
+
+x64 Native Tools Command Prompt for VS 2017:
+
+```sh
+E:\workspace_asm\hello-world>ml64.exe HelloWorld2.asm /link /subsystem:windows /defaultlib:kernel32.lib /defaultlib:user32.lib /entry:Main
+Microsoft (R) Macro Assembler (x64) Version 14.16.27045.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+ Assembling: HelloWorld2.asm
+Microsoft (R) Incremental Linker Version 14.16.27045.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/OUT:HelloWorld2.exe
+HelloWorld2.obj
+/subsystem:windows
+/defaultlib:kernel32.lib
+/defaultlib:user32.lib
+/entry:Main
+
+E:\workspace_asm\hello-world>HelloWorld2.exe
+```
+
+Output:
+![Win App](img/Win-HelloWorld.jpg)
+
+#### A *Window*
+
+x64 Native Tools Command Prompt for VS 2017:
+
+```sh
+E:\workspace_asm\hello-world>ml64.exe Test.asm /link /subsystem:windows /defaultlib:kernel32.lib /defaultlib:user32.lib /entry:Main samples\test\test.res
+Microsoft (R) Macro Assembler (x64) Version 14.16.27045.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+ Assembling: Test.asm
+Microsoft (R) Incremental Linker Version 14.16.27045.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/OUT:Test.exe
+Test.obj
+/subsystem:windows
+/defaultlib:kernel32.lib
+/defaultlib:user32.lib
+/entry:Main
+samples\test\test.res
+
+E:\workspace_asm\hello-world>Test.exe
+```
+
+Output:
+![A Window](img/Win-TestRes.jpg)
 
 ## Handling *markdown* article
 
