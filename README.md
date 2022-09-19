@@ -11,6 +11,7 @@
       - [A *MessageBox*](#a-messagebox)
       - [A *Window*](#a-window)
   - [Handling *markdown* article](#handling-markdown-article)
+  - [x64 Assembly](#x64-assembly)
 
 # hello-world
 
@@ -173,3 +174,24 @@ VSCode extensions:
 
 > Press `Ctl-Shift-P` to show the **Command Palette**.
 ![VSCode Command Palette](img/VSCode_CommandPalette.jpg)
+
+## x64 Assembly
+
+- [AMD64 documentation](http://www.amd.com/us-en/Processors/DevelopWithAMD/0,,30_2252_739_7044,00.html)
+
+Registers in the x64 syntax:
+
+- 8 new general-purpose registers (GPRs).
+- 8 new 128-bit XMM registers.
+
+Of course, all general-purpose registers are 64 bits wide. The old ones we already knew are easy to recognize in their 64-bit form: rax, rbx, rcx, rdx, rsi, rdi, rbp, rsp (and rip if we want to count the instruction pointer). These old registers can still be accessed in their smaller bit ranges, for instance: rax, eax, ax, ah, al. The new registers go from r8 to r15, and can be accessed in their various bit ranges like this: r8 (qword), r8d (dword), r8w (word), r8b (low byte).
+
+![x64 registers](img/x64_registers.jpg)
+
+Applications can still use segments registers as base for addressing, but the 64-bit mode only recognizes three of the old ones (and only two can be used for base address calculations). Here's another figure:
+
+![x64 Segments](img/x64_segments.jpg)
+
+And now, the most important things. Calling convention and stack. x64 assembly uses FASTCALLs as calling convention, meaning it uses registers to pass the first 4 parameters (and then the stack). Thus, the stack frame is made of: the stack parameters, the registers parameters, the return address (which I remind you is a qword) and the local variables. The first parameter is the rcx register, the second one rdx, the third r8 and the fourth r9. Saying that the parameters registers are part of the stack frame, makes it also clear that any function that calls another child function has to initialize the stack providing space for these four registers, even if the parameters passed to the child function are less than four. The initialization of the stack pointer is done only in the prologue of a function, it has to be large enough to hold all the arguments passed to child functions and it's always a duty of the caller to clean the stack. Now, the most important thing to understand how the space is provided in the stack frame is that the stack has to be 16-byte aligned. In fact, the return address has to be aligned to 16 bytes. So, the stack space will always be something like 16n + 8, where n depends on the number of parameters. Here's a small figure of a stack frame:
+
+![Stack Frame](img/stackframe.jpg)
