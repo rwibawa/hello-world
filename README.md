@@ -86,6 +86,10 @@ $ gcc -o simple simple2.s
 
 ### Console App
 
+- [HelloWorld](http://www.masmforum.com/board/index.php?topic=10880.0)
+- [masm32](http://www.masm32.com/)
+- [The MASM in 64 Bit Youtube channel](https://www.youtube.com/channel/UC9KbZKa9_5WFlMqd3Tw71Ow/videos)
+
 x64 Native Tools Command Prompt for VS 2017:
 
 ```sh
