@@ -12,6 +12,7 @@
       - [A *Window*](#a-window)
   - [Handling *markdown* article](#handling-markdown-article)
   - [x64 Assembly](#x64-assembly)
+  - [`gas`'s implementation](#gass-implementation)
 
 # hello-world
 
@@ -55,6 +56,8 @@ $ gcc file.S -o hello2
 $ ./hello2
 Hello World
 
+$ gcc file.c -S -fno-asynchronous-unwind-tables -o file.asm
+# This assembly code doesn't compile on Windows
 ```
 
 ## 3. Disassembly
@@ -195,3 +198,62 @@ Applications can still use segments registers as base for addressing, but the 64
 And now, the most important things. Calling convention and stack. x64 assembly uses FASTCALLs as calling convention, meaning it uses registers to pass the first 4 parameters (and then the stack). Thus, the stack frame is made of: the stack parameters, the registers parameters, the return address (which I remind you is a qword) and the local variables. The first parameter is the rcx register, the second one rdx, the third r8 and the fourth r9. Saying that the parameters registers are part of the stack frame, makes it also clear that any function that calls another child function has to initialize the stack providing space for these four registers, even if the parameters passed to the child function are less than four. The initialization of the stack pointer is done only in the prologue of a function, it has to be large enough to hold all the arguments passed to child functions and it's always a duty of the caller to clean the stack. Now, the most important thing to understand how the space is provided in the stack frame is that the stack has to be 16-byte aligned. In fact, the return address has to be aligned to 16 bytes. So, the stack space will always be something like 16n + 8, where n depends on the number of parameters. Here's a small figure of a stack frame:
 
 ![Stack Frame](img/stackframe.jpg)
+
+## `gas`'s implementation
+
+"SEH" is Structured Exception Handling, a Windows feature.
+
+I would like to show the patch for .pdata and .xdata generation of pe-coff targets via gas, and to get some feed-back. This patch includes support for arm, ppc, arm, sh (3&4), mips, and x64. As for x86 there is no OS support for runtime function information, I spared this part. It would just increase executable size for x86 PE and there is no real gain for this target.
+
+Short overview:
+There are at the moment three different function entry formats preset.
+
+The first is the MIPS one. The second version is for ARM, PPC, SH3, and SH4 mainly for Windows CE. The third is the IA64 and x64 version. Note, the IA64 isn't implemented yet, but to find information about it, please see specification about [IA64](http://download.intel.com/design/Itanium/Downloads/245358.pdf).
+
+The first version has just entries in the pdata section: BeginAddress, EndAddress, ExceptionHandler, HandlerData, and PrologueEndAddress. Each value is a pointer to the corresponding data and has size of 4 bytes.
+
+The second variant has the following entries in the pdata section. BeginAddress, PrologueLength (8 bits), EndAddress (22 bits), Use-32-bit-instruction (1 bit), and Exception-Handler-Exists (1 bit). If the FunctionLength is zero, or the Exception-Handler-Exists bit is true, a DATA_EH block is placed directly before function entry.
+
+The third version has a function entry block of BeginAddress (RVA), EndAddress (RVA), and UnwindData (RVA). The description of the prologue, excepetion-handler, and additional SEH data is stored within the UNWIND_DATA field in the xdata section.
+
+- *.seh_proc <fct_name>*
+  This specifies, that a SEH block begins for the function <fct_name>. This is valid for all targets.
+
+- *.seh_endprologue*
+  By this pseudo the location of the prologue end-address (taken by the current code address of the appearance of this pseudo). Valid for all targets.
+
+- *.seh_handler <handler>[,<handler-data>]*
+  This pseudo specifies the handler function to be used. For version 2 the handler-data field specifies the user optional data block. For version 3 the handler-data field can be a rva to user-data (for FHANDLER), if the name is @unwind the UHANDLER unwind block is generated, and if it is @except (or not specified at all) EHANDLER exception block is generated.
+
+- *.seh_eh*
+  This pseudo is used for version 2 to indicate the location of the function begin in assembly. Here the PDATA_EH data is may stored to.
+
+- *.seh_32/.seh_no32*
+  This pseudos are just used for version 2 (see above for description). At the moment it defaults to no32, if not specified.
+
+- *.seh_endproc*
+  By this pseudo the end of the SEH block is specified.
+
+* *.seh_setframe <reg>,<offset>*
+  By this pseudo the frame-register and the offset (value between 0-240 with 16-byte alignment) can be specified. This is just used by version 3.
+
+* *.seh_stackalloc <size>*
+  By this stack allocation in code is described for version 3.
+
+- *.seh_pushreg <reg>*
+  By this a general register push in code is described for version 3.
+
+- *.seh_savereg <reg>*
+  By this a general register save to memory in code is described for version 3.
+
+- *.seh_savemm <mm>*
+  By this a mm register save to memory in code is described for version 3.
+
+- *.seh_savexmm*
+By this a xmm register save to memory in code is described for version 3.
+
+- *.seh_pushframe*
+By this information about entry kind can be described for version 3.
+
+- *.seh_scope <begin>,<end>,<handler>,<jump>*
+  By this SCOPED entries for unwind or exceptions can be specified for version 3. This is just valid for UHANDLE and EHANDLER xdata descriptor and a global handler has to be specified. For handler and jump arguments, names of @1,@0, and @null can be used and they are specifying that a constant instead of a rva has to be used.
